@@ -89,13 +89,12 @@ export class Animations {
   }
 
   static freehand(element:SVGSVGElement, settings:FreehandAnimateSettings={}) {
-
     // values from settings
     const id = element.getAttribute('id')
     const width = this.defaultFloat(settings.width, 30)
     const duration = this.defaultFloat(settings.duration, 3)
     const minLength = this.defaultFloat(settings.minLength, 0)
-      
+
     // ensure style sheet
     const styleSheet:CSSStyleSheet = ( document.styleSheets && document.styleSheets[0] ) as CSSStyleSheet
     if (!styleSheet) {
@@ -164,9 +163,9 @@ export class Animations {
       .forEach(index => {
         const path = paths[index]
         const pathLength = path.getTotalLength()
-        const pathDuration = pathLength < minLength 
+        const pathDuration = pathLength >= minLength 
           ? (pathLength / totalLength) * duration * durationAdjustment
-          : 1
+          : 0
 
         if (pathLength < minLength) {
           // add css keyframe for animation
