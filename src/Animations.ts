@@ -11,61 +11,71 @@ export class Animations {
   // todo:getPointsFromPath
   // https://github.com/colinmeinke/svg-points/blob/master/src/toPoints.js
 
-  static applyValidPaths(element, settings:AnimationSettings={}, callback) {
+
+  // expands delimited (usually comma or semicolon) list of keys or key
+  // value pairs (colon-separated)
+  static expandSettingValue(value:string, delimiter:string|RegExp) {
+    return value 
+    ? value.split(delimiter).reduce((obj, pair)  => {
+      const parts = pair.split(/:/)
+      obj[parts[0]] = parts.length > 1 ? parts[1] : true
+      return obj
+    }, {})
+    : {}   
+  }
+
+  // given an svg element, styles and rules (expanded with expandSettingValue), 
+  // and a condition check callback, this will determine if the element should
+  // be ignored
+  static checkIgnore(
+    element:SVGElement, 
+    styles: any,
+    rules:{[name:string]: any}, 
+    condition:(ruleValue:any, attributeValue:any)=>boolean
+  ) {
+    for (const rule in rules) {
+      const attr = element.getAttribute(rule) || styles[rule]
+      const ignore = condition(rules[rule], attr)
+      if (ignore) {
+        return true
+      }
+    }
+    return false
+  }
+
+  // given an SVGElement, all of the rules (limits, excludes, etc.), and
+  static applyValidPaths(
+    element: SVGSVGElement, 
+    settings: AnimationSettings={}, 
+    // callback: (index: string|number, path: SVGGeometryElement) => void
+  ):{[index: string]: SVGGeometryElement} {
     const svgAttributes = Animate.inspectSvg(element)
     const paths = {}
-
-    const limits = settings.limit 
-      ? settings.limit.split(/[\,\&]/).reduce((obj, pair)  => {
-        const parts = pair.split(/:/)
-        obj[parts[0]] = parts.length > 1 ? parts[1] : true
-        return obj
-      }, {})
-      : {} 
-
-    const excludes = settings.exclude 
-      ? settings.exclude.split(/[\,\&]/).reduce((obj, pair)  => {
-        const parts = pair.split(/:/)
-        obj[parts[0]] = parts.length > 1 ? parts[1] : true
-        return obj
-      }, {})
-      : {} 
+    const limits = Animations.expandSettingValue(settings.limit, /[\,\&]/)
+    const excludes = Animations.expandSettingValue(settings.exclude, /[\,\&]/)
 
     for (const index in svgAttributes.paths) {
       const path = svgAttributes.paths[index]
 
-      let ignore = false
+      const styles = Animations.expandSettingValue(path.getAttribute('style'), /\s*;\s*/)
 
-      const style = path.getAttribute('style') 
-        ? path.getAttribute('style').split(/\s*;\s*/).reduce((obj, pair) => {
-          const parts = pair.split(/:/)
-          obj[parts[0]] = parts.length > 1 ? parts[1] : true
-          return obj
-        }, {})
-        : {}
-
-      for (const item in limits) {
-        const attr = path.getAttribute(item) || style[item]
-        if (limits[item] !== ( typeof attr === 'undefined' || attr === null ? 'default' : attr )) {
-          ignore = true
-          break
-        }
-      }
-
-      for (const item in excludes) {
-        const attr = path.getAttribute(item) || style[item]
-        if (excludes[item] === ( typeof attr === 'undefined' || attr === null ? 'default' : attr )) {
-          ignore = true
-          break
-        }
-      }
-
-
-      if (!ignore) {
+      if(!(
+        Animations.checkIgnore(
+          path, 
+          styles, 
+          limits,
+          (ruleValue, attributeValue) =>
+            (ruleValue !== ( typeof attributeValue === 'undefined' || attributeValue === null ? 'default' : attributeValue ))
+        ) ||
+        Animations.checkIgnore(
+          path, 
+          styles, 
+          excludes,
+          (ruleValue, attributeValue) =>
+            (ruleValue === ( typeof attributeValue === 'undefined' || attributeValue === null ? 'default' : attributeValue ))
+        )
+      )) {
         paths[index] = path
-        if (typeof callback === 'function') {
-          callback(index, path)
-        }
       }
     }
 
@@ -83,7 +93,7 @@ export class Animations {
     // values from settings
     const id = element.getAttribute('id')
     const width = this.defaultFloat(settings.width, 30)
-    const duration = this.defaultFloat(settings.duration, 20)
+    const duration = this.defaultFloat(settings.duration, 3)
     const minLength = this.defaultFloat(settings.minLength, 0)
       
     // ensure style sheet
@@ -100,22 +110,20 @@ export class Animations {
     let totalLength = 0 
     let compressedDuration = 0
 
-    const paths = Animations.applyValidPaths(element, settings, function(index, path) {
+    const paths = Animations.applyValidPaths(element, settings)
 
+    Object.keys(paths).forEach(index => {
+      const path = paths[index];
       const pathLength = path.getTotalLength()
 
       compressedDuration += Math.min(
-        parseFloat(pathLength) 
-        ? (parseFloat(pathLength) / totalLength) * duration
-        : 0.05,
+        (pathLength / totalLength) * duration,
         duration * 0.25
       )
 
-      if (pathLength < minLength) {
-        return
+      if (pathLength >= minLength) {
+        totalLength += pathLength
       }
-
-      totalLength += pathLength
     })
 
     const durationAdjustment = duration / compressedDuration 
@@ -156,13 +164,9 @@ export class Animations {
       .forEach(index => {
         const path = paths[index]
         const pathLength = path.getTotalLength()
-        const pathDuration = pathLength < minLength  
-          ? 0 
-          : (
-            parseFloat(pathLength) 
-            ? (parseFloat(pathLength) / totalLength) * duration
-            : 0.05
-          ) * durationAdjustment
+        const pathDuration = pathLength < minLength 
+          ? (pathLength / totalLength) * duration * durationAdjustment
+          : 1
 
         if (pathLength < minLength) {
           // add css keyframe for animation
@@ -220,7 +224,9 @@ export class Animations {
       return
     }
 
-    this.applyValidPaths(element, settings, function(index, path) {
+    const paths = this.applyValidPaths(element, settings)
+    Object.keys(paths).forEach(index => {
+      const path = paths[index]
       // to do -- fill this in marker style
       path.setAttribute('opacity', '0')
     })

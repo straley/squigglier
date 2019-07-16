@@ -2,8 +2,8 @@
 
 **Squiggler is in alpha and changing rapidly.**
 
-Squgglier is an enhanced SVG rendering engine designed to produce animated content.  
-Squgglier works with existing SVG elements and HTML pages and polyfills additional functionality.
+Squigglier is an enhanced SVG rendering engine designed to produce animated content.  
+Squigglier works with existing SVG elements and HTML pages and polyfills additional functionality.
 
 ## Installation
 

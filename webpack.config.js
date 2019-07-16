@@ -4,7 +4,7 @@ var webpack = require("webpack");
 var PATHS = {
   entryPoint: path.resolve(__dirname, 'build/index.js'),
   // entryPoint: path.resolve(__dirname, 'src/index.ts'),
-  bundles: path.resolve(__dirname, '_bundles'),
+  bundles: path.resolve(__dirname, 'release'),
 }
 
 var config = {

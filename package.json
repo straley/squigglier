@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "demo": "cd demo; node server.js",
-    "clean": "rm -rf _bundles lib lib-esm",
+    "clean": "rm -rf release lib lib-esm",
     "build": "npm run clean && tsc --outDir build && tsc -m es6 --outDir lib-esm && webpack",
     "start": "concurrently \"npm run watch-lib\" \"npm run watch-demo\"",
     "watch-lib": "watch \"npm run build\" src",
