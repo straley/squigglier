@@ -1,0 +1,37 @@
+{
+  "name": "squigglier",
+  "version": "0.0.1",
+  "description": "animated svg stage for presentions, games, banners, and more",
+  "repository": "https://www.github.com/straley/squigglier",
+  "main": "index.js",
+  "scripts": {
+    "demo": "cd demo; node server.js",
+    "clean": "rm -rf _bundles lib lib-esm",
+    "build": "npm run clean && tsc --outDir build && tsc -m es6 --outDir lib-esm && webpack",
+    "start": "concurrently \"npm run watch-lib\" \"npm run watch-demo\"",
+    "watch-lib": "watch \"npm run build\" src",
+    "watch-demo": "cd demo; nodemon server.js"
+  },
+  "keywords": [
+    "svg",
+    "animation",
+    "polyfill",
+    "presentations",
+    "games",
+    "banners",
+    "ads"
+  ],
+  "author": "Scott Straley",
+  "license": "MIT",
+  "dependencies": {
+    "awesome-typescript-loader": "^5.2.1",
+    "typescript": "^3.5.3",
+    "webpack": "^4.35.3"
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.1",
+    "express": "^4.17.1",
+    "watch": "^1.0.2",
+    "webpack-cli": "^3.3.6"
+  }
+}

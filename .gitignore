@@ -1,0 +1,10 @@
+.vscode
+.DS_Store
+node_modules
+
+lib
+lib-esm
+_bundles
+build
+dist
+notes.txt
