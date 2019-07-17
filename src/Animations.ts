@@ -1,14 +1,32 @@
 import { Animate, AnimationSettings } from './Animate'
 
-export type FreehandAnimateSettings = {
-  width?: number|string,
-  duration?: number|string,
-  minLength?: number|string,
+import { Freehand } from './Animations/Freehand'
+import { FillIn } from './Animations/FillIn'
+
+export type GeoMeta = {
+  totalGeoLength: number,
+  totalDrawableGeoLength: number,
+  totalDelay: number,
+  geoData: {
+    [index: string]: {
+      geo?: SVGGeometryElement,
+      drawable: boolean,
+      length: number,
+      duration: number,
+      delay: number
+    }
+  }
 }
 
 export class Animations {
 
-  // todo:getPointsFromPath
+  static NONDRAWABLE_DURATION = 0.5
+
+  // usable animations 
+  static freehand = Freehand.render
+  static fillin = FillIn.render
+
+  // todo:getPointsFromGeos
   // https://github.com/colinmeinke/svg-points/blob/master/src/toPoints.js
 
 
@@ -43,43 +61,125 @@ export class Animations {
     return false
   }
 
-  // given an SVGElement, all of the rules (limits, excludes, etc.), and
-  static applyValidPaths(
+  // given an SVGElement, all of the rules (limits, excludes, etc.), and settings
+  // provide a set of geometries
+  static applyValidGeometries(
     element: SVGSVGElement, 
-    settings: AnimationSettings={}, 
-    // callback: (index: string|number, path: SVGGeometryElement) => void
-  ):{[index: string]: SVGGeometryElement} {
+    settings: AnimationSettings={}
+  ):{
+    [index: string]: SVGGeometryElement
+  } {
     const svgAttributes = Animate.inspectSvg(element)
-    const paths = {}
+    const geos = {}
     const limits = Animations.expandSettingValue(settings.limit, /[\,\&]/)
     const excludes = Animations.expandSettingValue(settings.exclude, /[\,\&]/)
 
-    for (const index in svgAttributes.paths) {
-      const path = svgAttributes.paths[index]
+    for (const index in svgAttributes.geos) {
+      const geo = svgAttributes.geos[index]
 
-      const styles = Animations.expandSettingValue(path.getAttribute('style'), /\s*;\s*/)
+      const styles = Animations.expandSettingValue(geo.getAttribute('style'), /\s*;\s*/)
 
       if(!(
         Animations.checkIgnore(
-          path, 
+          geo, 
           styles, 
           limits,
           (ruleValue, attributeValue) =>
             (ruleValue !== ( typeof attributeValue === 'undefined' || attributeValue === null ? 'default' : attributeValue ))
         ) ||
         Animations.checkIgnore(
-          path, 
+          geo, 
           styles, 
           excludes,
           (ruleValue, attributeValue) =>
             (ruleValue === ( typeof attributeValue === 'undefined' || attributeValue === null ? 'default' : attributeValue ))
         )
       )) {
-        paths[index] = path
+        geos[index] = geo
       }
     }
 
-    return paths
+    return geos
+  }
+
+  // given a set of geometries, build metadata for rendering 
+  static geometriesToGeoMeta(
+    geometries: { 
+      [index: string]: SVGGeometryElement
+    },
+    minLength: number,
+    targetDuration: number,
+  ): GeoMeta {
+    const meta: GeoMeta = Object.keys(geometries).reduce(
+      (info, index) => {
+
+        const geo = geometries[index]
+        const length = geo.getTotalLength()
+        const drawable = length >= minLength
+
+        const totalDrawableGeoLength = drawable 
+          ? info.totalDrawableGeoLength + length
+          : info.totalDrawableGeoLength
+
+        const totalGeoLength = info.totalGeoLength + length
+        const duration = drawable 
+          ? (length / totalDrawableGeoLength) * targetDuration 
+          : Animations.NONDRAWABLE_DURATION
+        
+        const geoData = {
+          ...info.geoData,
+          [index]: {
+            ... info.geoData[index] || {},
+            geo,
+            length,
+            drawable,
+            duration
+          }
+        }
+
+        return {
+          totalDrawableGeoLength,
+          totalGeoLength,
+          totalDelay: 0,
+          geoData,
+        }
+      }, 
+      { 
+        totalGeoLength: 0, 
+        totalDrawableGeoLength: 0, 
+        totalDelay: 0,
+        geoData: {}
+      }
+    )
+
+    const { geoData } = meta
+
+    // determine adjustment to durations based upon number of drawable geos
+    const totalDurations = Object.keys(geoData)
+      .reduce((duration:number, index:string) => duration + geoData[index].duration, 0)
+
+    const durationAdjustment = targetDuration / totalDurations
+
+    // determine timing of each geo
+    // todo: this is for sequential
+    
+    Object.keys(geoData)
+    .sort((a, b) => geoData[a].length > geoData[b].length ? -1 : 1)
+    .forEach(index => {
+      const data = geoData[index]
+      data.duration *= durationAdjustment
+      data.delay = meta.totalDelay 
+      meta.totalDelay += data.duration
+    })
+  
+    return meta
+  } 
+
+  static withStyleSheet(callback: (CSSStyleSheet)=>void) {
+    const styleSheet:CSSStyleSheet = ( document.styleSheets && document.styleSheets[0] ) as CSSStyleSheet
+    if (styleSheet) {
+      callback(styleSheet)
+    }
   }
 
   static defaultFloat(value:any, defaultValue:number) {
@@ -88,146 +188,19 @@ export class Animations {
       : defaultValue     
   }
 
-  static freehand(element:SVGSVGElement, settings:FreehandAnimateSettings={}) {
-    // values from settings
-    const id = element.getAttribute('id')
-    const width = this.defaultFloat(settings.width, 30)
-    const duration = this.defaultFloat(settings.duration, 3)
-    const minLength = this.defaultFloat(settings.minLength, 0)
+  static addElement(
+    parent: HTMLElement, 
+    html: string, 
+    position?: InsertPosition
+  ) {
+    const template = document.createElement('template')
+    template.innerHTML = html
 
-    // ensure style sheet
-    const styleSheet:CSSStyleSheet = ( document.styleSheets && document.styleSheets[0] ) as CSSStyleSheet
-    if (!styleSheet) {
+    if (!position) {
+      parent.append(template.content)
       return
     }
 
-    // create definition block for mask paths
-    const defs = document.createElement('defs')
-
-    let maxLength = minLength
-
-    let totalLength = 0 
-    let compressedDuration = 0
-
-    const paths = Animations.applyValidPaths(element, settings)
-
-    Object.keys(paths).forEach(index => {
-      const path = paths[index];
-      const pathLength = path.getTotalLength()
-
-      compressedDuration += Math.min(
-        (pathLength / totalLength) * duration,
-        duration * 0.25
-      )
-
-      if (pathLength >= minLength) {
-        totalLength += pathLength
-      }
-    })
-
-    const durationAdjustment = duration / compressedDuration 
-
-    Object.keys(paths).forEach(index => {
-      const path = paths[index]      
-      
-
-      const pathLength = path.getTotalLength()
-      maxLength = Math.max(maxLength, pathLength)
-
-      if (pathLength < minLength) {
-        path.classList.add(`${id}-tiny-${index}`)
-        return
-      }
-
-      const mask = document.createElement('mask')
-      mask.setAttribute('id', `${id}-mask-${index}`)
-      mask.setAttribute('maskUnits', 'userSpaceOnUse')
-      
-      const maskPath = document.createElement('path')
-      maskPath.setAttribute('d', path.getAttribute('d'))
-      maskPath.classList.add(`${id}-mask`)
-      mask.append(maskPath)
-      defs.append(mask)
-
-      path.setAttribute('mask', `url(#${id}-mask-${index})`)
-    })
-
-    // add defnition block to the beginning of the element
-    element.insertAdjacentElement('afterbegin', defs)
-
-    let delay = 0
-
-    Object
-      .keys(paths)
-      .sort((a, b) => paths[a].getTotalLength() > paths[b].getTotalLength() ? -1 : 1)
-      .forEach(index => {
-        const path = paths[index]
-        const pathLength = path.getTotalLength()
-        const pathDuration = pathLength >= minLength 
-          ? (pathLength / totalLength) * duration * durationAdjustment
-          : 0
-
-        if (pathLength < minLength) {
-          // add css keyframe for animation
-          styleSheet.insertRule(`
-            @keyframes ${id}-freehand-${index} {
-              from { opacity: 0; }
-              to { opacity: 1; }
-            }
-          `)
-
-          // add css settings
-          styleSheet.insertRule(`
-            .${id}-tiny-${index} {
-              opacity: 0;
-              animation: ${id}-freehand-${index} ${pathDuration}s linear forwards;
-              animation-delay: ${delay}s;
-            }
-          `)
-
-          delay += pathDuration || 0.5
-          return
-        }  
-
-        // add css keyframe for animation
-        styleSheet.insertRule(`
-          @keyframes ${id}-freehand-${index} {
-            from { stroke-dashoffset: ${pathLength}; }
-            to { stroke-dashoffset: 0; }
-          }
-        `)
-
-        // add css mask settings
-        styleSheet.insertRule(`
-          #${id}-mask-${index} {
-            fill: none;
-            stroke: white;
-            stroke-width: ${width};
-            stroke-dasharray: ${pathLength} ${pathLength};
-            stroke-dashoffset: ${pathLength};
-            animation: ${id}-freehand-${index} ${pathDuration}s linear forwards;
-            animation-delay: ${delay}s;
-          }
-        `)
-
-        delay += Math.min(pathDuration, duration * 0.25) 
-      }
-    )
-
-  }
-
-  static fillin(element:SVGSVGElement, settings={}) {
-    // ensure style sheet
-    const styleSheet = document.styleSheets && document.styleSheets[0]
-    if (!styleSheet) {
-      return
-    }
-
-    const paths = this.applyValidPaths(element, settings)
-    Object.keys(paths).forEach(index => {
-      const path = paths[index]
-      // to do -- fill this in marker style
-      path.setAttribute('opacity', '0')
-    })
+    parent.insertAdjacentElement('afterbegin', template.content.firstElementChild)
   }
 }

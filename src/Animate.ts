@@ -1,5 +1,5 @@
 import { AnimateFilterSettings } from './Filters'
-import { FreehandAnimateSettings } from './Animations'
+import { FreehandAnimateSettings } from './Animations/Freehand'
 
 export type AnimationSettings = {
   limit?: string,
@@ -12,13 +12,12 @@ export type SVGAttributes = {
   stroke?: string,
 }
 
-const SVG_STROKE_ELEMENTS:Array<string> = [
-  'circle', 'ellipse', 'line', 'path', 'polygon', 'polyline', 'rect', 'text' 
-]
-
 export class Animate {
-  static svgOverride(element:SVGElement, attributes:SVGAttributes) {
+  static SVG_GEO_ELEMENTS:Array<string> = [
+    'circle', 'ellipse', 'line', 'path', 'polygon', 'polyline', 'rect', 'text' 
+  ]
 
+  static svgOverride(element:SVGElement, attributes:SVGAttributes) {
     for (const name of Object.keys(attributes)) {
       element.setAttribute(name, attributes[name])
     }
@@ -31,9 +30,9 @@ export class Animate {
     }
   }
 
-  static inspectSvg = function(element:SVGSVGElement, results={paths:[]}) {
-    if (SVG_STROKE_ELEMENTS.indexOf(element.tagName) !== -1) {
-      results.paths.push(element)
+  static inspectSvg = function(element:SVGSVGElement, results={geos:[]}) {
+    if (Animate.SVG_GEO_ELEMENTS.indexOf(element.tagName) !== -1) {
+      results.geos.push(element)
       return results
     } 
 

@@ -69,25 +69,46 @@ export class Loader {
         }
       }
   
-      for (const animation of animations) {
-        const [command, settings] = animation
-        if (typeof Animations[command] === 'function') {
-          Animations[command](object, settings)
-        }
-      }
-  
       for (const filter of filters) {
         const [command, settings] = filter
         if (typeof Filters[command] === 'function') {
           Filters[command](object, settings)
         }
       }
-  
-      // if (onload && window && typeof window[onload] === 'function') {
-      //  window[onload](object)
-      // }
-  
-      target.outerHTML = object.outerHTML
+
+      // chain sets up a sequence of actions 
+      const sequence:Array<{element: HTMLElement, command: string, settings: any}> = []
+
+      const getNextSequence = (parent) => {
+        if (sequence.length === 0) {
+          target.outerHTML = parent.outerHTML
+          return
+        }
+
+        const nextSequence = sequence.shift()
+        const { element, command, settings } = nextSequence
+
+
+        console.log(element.constructor, element.getAttribute('id'), command, settings)
+
+        Animations[command](element, settings, getNextSequence)
+      }
+
+      for (const animation of animations) {
+        const [command, settings] = animation
+        if (typeof Animations[command] === 'function') {
+          sequence.push({
+            element: object,
+            command,
+            settings,
+          })
+        }
+      }
+
+      // start the chain
+      // chain(object)
+      console.log('o', object.getAttribute('id'), object.constructor)
+      getNextSequence(object)
     })
   }
 }
