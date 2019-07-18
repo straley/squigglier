@@ -199,20 +199,4 @@ export class Animations {
       ? parseFloat(value) 
       : defaultValue     
   }
-
-  static addElement(
-    parent: HTMLElement, 
-    html: string, 
-    position?: InsertPosition
-  ) {
-    const template = document.createElement('template')
-    template.innerHTML = html
-
-    if (!position) {
-      parent.append(template.content)
-      return
-    }
-
-    parent.insertAdjacentElement('afterbegin', template.content.firstElementChild)
-  }
 }

@@ -1,5 +1,6 @@
 import { Animations } from './Animations'
-import { CommandSettings } from './Loader';
+import { CommandSettings } from './Loader'
+import { SVGStyle, SVGCSSRules } from './SVGStyle'
 
 export type SequenceAction = {
   command: string,
@@ -8,70 +9,81 @@ export type SequenceAction = {
 
 export type SequenceActions = Array<SequenceAction>
 
+export type SequenceThen = () => void
 
 export class Sequence {
   private actions: SequenceActions = []
   private _index:number = 0
   private _element: SVGSVGElement
-  private _target :SVGSVGElement
-  public _keyframesRules: {[index:string]: string} = {}
-  private _selectorRules: {[index:string]: string} = {}
+  private actionSettings: any = {}
+  private finalAction?: SequenceThen
+  private _style: SVGStyle
 
   constructor(
-    element: SVGSVGElement,
-    target: SVGSVGElement
+    element: SVGSVGElement
   ) {
     this._element = element
-    this._target = target
+    this._style = new SVGStyle(this._element, this)
   }
 
-  element() {
+  public element() {
     return this._element
   }
 
-  target() {
-    return this._target
-  }
-
-  index() {
+  public index() {
     return this._index
   }
 
-  public nextAction(actionSettings: any = {}) {
+  public style() {
+    return this._style
+  }
+
+  public static attach(element: SVGSVGElement) {
+    return new Sequence(element)
+  }
+
+  public settings(actionSettings: any = {}) {
+    this.actionSettings = actionSettings    
+  }
+
+  public run() {
     this._index++
 
     if (this.actions.length === 0) {
-      // unpack css
-      Animations.withStyleSheet(styleSheet => {
 
-        Object.keys(this._keyframesRules).forEach(id => {
-          styleSheet.insertRule(`@keyframes ${id} ${this._keyframesRules[id]}`)
-        })
+      this._style.render()
 
-        Object.keys(this._selectorRules).forEach(id => {
-          styleSheet.insertRule(`${id} ${this._selectorRules[id]}`)
-        })
-      })
-
-      this._target.outerHTML = this._element.outerHTML
-      return this
+      if (typeof this.finalAction === 'function') {
+        this.finalAction()
+      }
     }
 
     const action = this.actions.shift()
+    if (!action) {
+      return this
+    }
+
     const { command, settings } = action
 
-    Object.keys(actionSettings).forEach(index => {
+    Object.keys(this.actionSettings).forEach(index => {
       if (typeof settings[index] === 'undefined') {
-        settings[index] = actionSettings[index].toString()
+        settings[index] = this.actionSettings[index].toString()
         return this
       }
 
-      if (!isNaN(settings[index]) && !isNaN(actionSettings[index])) {
-        settings[index] = (parseFloat(settings[index]) + parseFloat(actionSettings[index])).toString()
+      // add numbers as numbers
+      if (!isNaN(settings[index]) && !isNaN(this.actionSettings[index])) {
+        settings[index] = (parseFloat(settings[index]) + parseFloat(this.actionSettings[index])).toString()
       }
     })
 
     Animations[command](settings, this)
+
+    return this
+  }
+
+  public finally(finalAction: SequenceThen) {
+    this.finalAction = finalAction
 
     return this
   }
@@ -87,44 +99,5 @@ export class Sequence {
     return this
   }
 
-  public addKeyFramesRule(id:string, rule:string) {
-    this._keyframesRules[id] = rule
-  }
 
-  private parseSelectorRule(rule:string) {
-    const contents = rule.replace(/^[^\{]*\{/, '').replace(/\}[^\}]*$/, '')
-    return contents.split(/\;/).map(property => property.trim()).reduce((properties, property) => {
-      const [key, value] = property.split(/\s*:\s*/)
-      if (key) {
-        properties[key] = value
-      }
-      return properties
-    }, {})
-  }
-
-  public addSelectorRule(id:string, rule:string) {
-    const parsedRule = this.parseSelectorRule(rule)
-    const existing = this._selectorRules[id]
-    if (existing) {
-      const parsedExisting = this.parseSelectorRule(existing)
-      Object.keys(parsedRule).forEach(key => {
-        parsedExisting[key] = [
-          ...parsedExisting[key] ? parsedExisting[key].split((/\s*:\s*/)) : [],
-          ...parsedRule[key] ? parsedRule[key].split((/\s*:\s*/)) : [],
-        ].join(', ')
-      }) 
-
-      this._selectorRules[id] = `
-        {
-          ${Object.keys(parsedExisting)
-            .map(key => `${key}: ${parsedExisting[key]};`)
-            .join('')
-          }
-        }`
-
-      return
-    } 
-
-    this._selectorRules[id] = rule
-  }
 }

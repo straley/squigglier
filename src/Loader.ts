@@ -12,6 +12,7 @@ export type CommandSettings = {
 } 
 
 export class Loader {
+  private assets = {}
 
   constructor(elements: HTMLCollectionOf<SVGSVGElement>) {
     for (const index in elements) {
@@ -55,7 +56,7 @@ export class Loader {
       // let onload = null
       const animations: Array<CommandSettings> = []
       const filters: Array<CommandSettings> = []
-  
+
       for (const key of Object.keys(target.attributes)) {
         const attr = target.attributes[key]
         if (! attributes.hasOwnProperty(attr.name)) {
@@ -88,9 +89,14 @@ export class Loader {
         return
       }
 
-      (new Sequence(object, target))
+      Sequence
+        .attach(object)
         .addActions(animations)
-        .nextAction()
+        .finally(() => {
+          this.assets[object.getAttribute('id')] = object.outerHTML
+          target.outerHTML = object.outerHTML
+        })
+        .run()     
     })
   }
 }

@@ -11,16 +11,17 @@
       margin: 0px;
     }
     body {
-      background-color: transparent;
+      background-color: #aaa;
     }
     .frame {
       display: block;
       position: absolute;
-      background-color: #eee;
+      background-color: transparent;
       width: 760px;
       height: 330px;
       left: 30px;
     }
+
     #before {
       top: 20px;
     }
@@ -44,17 +45,17 @@
   <div class="frame" id="before">
     <h1>Before</h1>
     <svg 
-      id="location" 
+      id="location1" 
       style="width:200px; height:200px; left: 40px;"
       src="/assets/location.svg" 
     ></svg>
     <svg 
-      id="camera" 
+      id="camera1" 
       style="width:200px; height:200px; left: 280px; fill: red"
       src="/assets/camera.svg" 
     ></svg>
     <svg 
-      id="red-panda"
+      id="red-panda1"
       style="width:200px; height:200px; left: 520px;"
       src="/assets/red-panda.svg" 
     ></svg>
@@ -81,7 +82,6 @@
       animation="fillin exclude=fill:default; freehand await width=12 minLength=50 limit=fill:default,stroke:default; fillin exclude=fill:default opacity=1 duration=1.5" 
     ></svg>
   </div>
-
 </body>
 
 </html>
