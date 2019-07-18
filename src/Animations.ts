@@ -18,6 +18,18 @@ export type GeoMeta = {
   }
 }
 
+export type AnimationSequence = Array<{
+  element: HTMLElement, 
+  command: string, 
+  settings: any
+}>
+
+export type AnimationSequenceAction = (
+  element: SVGSVGElement,
+  parent: HTMLElement,
+  sequence: AnimationSequence
+) => void
+
 export class Animations {
 
   static NONDRAWABLE_DURATION = 0.5

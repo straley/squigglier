@@ -1,6 +1,6 @@
-import {Loader} from './Loader';
+import { Loader } from './Loader';
 
 document.addEventListener(
   'DOMContentLoaded', 
-  ()=>new Loader(document.getElementsByTagName('svg')) 
+  ()=>Loader.compile(document.getElementsByTagName('svg')) 
 )

@@ -1,10 +1,16 @@
-import { Animations } from '../Animations'
+import { 
+  Animations, 
+  AnimationSequence, 
+  AnimationSequenceAction 
+} from '../Animations'
 
 export class FillIn {
   static render(
-    element:SVGSVGElement, 
-    settings={},
-    nextAction:(element:SVGSVGElement)=>void
+    element: SVGSVGElement, 
+    settings: any,
+    parent: HTMLElement,
+    sequence: AnimationSequence, 
+    nextAction: AnimationSequenceAction
   ) {
     // ensure style sheet
     Animations.withStyleSheet(styleSheet => {
@@ -16,8 +22,6 @@ export class FillIn {
       })
     })
 
-    if (typeof nextAction === 'function') {
-      nextAction(element)
-    }
+    nextAction(element, parent, sequence)
   }
 }

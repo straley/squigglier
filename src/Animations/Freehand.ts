@@ -1,4 +1,9 @@
-import { Animations, GeoMeta } from '../Animations'
+import { 
+  Animations, 
+  AnimationSequence, 
+  AnimationSequenceAction, 
+  GeoMeta 
+} from '../Animations'
 
 export type FreehandAnimateSettings = {
   width?: number|string,
@@ -7,15 +12,18 @@ export type FreehandAnimateSettings = {
 }
 
 export class Freehand {
+
   static render(
-    element:SVGSVGElement, 
-    settings:FreehandAnimateSettings={}, 
-    nextAction:(element:SVGSVGElement)=>void
+    element: SVGSVGElement, 
+    settings: FreehandAnimateSettings, 
+    parent: HTMLElement,
+    sequence: AnimationSequence,
+    nextAction: AnimationSequenceAction
   ) {
-    console.log('FREEHAND')
+    console.log("FH")
+    console.log(element, settings, sequence, nextAction)
     // ensure style sheet
     Animations.withStyleSheet((styleSheet => {
-      console.log('HAS CSS')
       // values from settings
       const id = element.getAttribute('id')
       const width = Animations.defaultFloat(settings.width, 30)
@@ -92,7 +100,7 @@ export class Freehand {
     }))
 
     if (typeof nextAction === 'function') {
-      nextAction(element)
+      nextAction(element, parent, sequence)
     }
   }
 }
