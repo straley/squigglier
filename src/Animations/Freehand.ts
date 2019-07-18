@@ -1,9 +1,5 @@
-import { 
-  Animations, 
-  AnimationSequence, 
-  AnimationSequenceAction, 
-  GeoMeta 
-} from '../Animations'
+import { Animations, GeoMeta } from '../Animations'
+import { Sequence } from '../Sequence';
 
 export type FreehandAnimateSettings = {
   width?: number|string,
@@ -12,42 +8,38 @@ export type FreehandAnimateSettings = {
 }
 
 export class Freehand {
-
   static render(
-    element: SVGSVGElement, 
-    settings: FreehandAnimateSettings, 
-    parent: HTMLElement,
-    sequence: AnimationSequence,
-    nextAction: AnimationSequenceAction
+    settings: any = {},
+    sequence: Sequence
   ) {
-    console.log("FH")
-    console.log(element, settings, sequence, nextAction)
     // ensure style sheet
     Animations.withStyleSheet((styleSheet => {
       // values from settings
-      const id = element.getAttribute('id')
+      const id = sequence.element().getAttribute('id')
       const width = Animations.defaultFloat(settings.width, 30)
       const minLength = Animations.defaultFloat(settings.minLength, 0)
       const duration = Animations.defaultFloat(settings.duration, 3)
+      const awaitNext = typeof settings.await !== 'undefined' 
 
     // create definition block for mask geometries
       const defs = document.createElement('defs')
 
       // parse geometries in element 
-      const validGeos = Animations.applyValidGeometries(element, settings)
+      const validGeos = Animations.applyValidGeometries(sequence.element(), settings)
       const meta:GeoMeta = Animations.geometriesToGeoMeta(validGeos, minLength, duration)
 
       // add classes and masks for animations
       Object.keys(meta.geoData)
         .forEach(index => {
           const data = meta.geoData[index]
+          const seqId = `${id}-${sequence.index()}-${index}`
 
           if (!data.drawable) {
-            data.geo.classList.add(`${id}-tiny-${index}`)
+            data.geo.classList.add(`${seqId}-tiny`)
 
             // add css keyframe for animation
             styleSheet.insertRule(`
-              @keyframes ${id}-freehand-${index} {
+              @keyframes ${seqId}-freehand {
                 from { opacity: 0; }
                 to { opacity: 1; }
               }
@@ -55,9 +47,9 @@ export class Freehand {
 
             // add css settings
             styleSheet.insertRule(`
-              .${id}-tiny-${index} {
+              .${seqId}-tiny {
                 opacity: 0;
-                animation: ${id}-freehand-${index} 0s linear forwards;
+                animation: ${seqId}-freehand 0s linear forwards;
                 animation-delay: ${data.delay}s;
               }
             `)
@@ -65,29 +57,29 @@ export class Freehand {
           }
 
           Animations.addElement(defs, `
-            <mask id="${id}-mask-${index}" maskUnits="userSpaceOnUse">
-              <path class="${id}-mask" d="${data.geo.getAttribute('d')}"/>
+            <mask id="${seqId}-mask" maskUnits="userSpaceOnUse">
+              <path class="${seqId}-mask" d="${data.geo.getAttribute('d')}"/>
             </mask>
           `, 'beforeend')
 
-          data.geo.setAttribute('mask', `url(#${id}-mask-${index})`)
+          data.geo.setAttribute('mask', `url(#${seqId}-mask)`)
 
           // add css mask settings
           styleSheet.insertRule(`
-            #${id}-mask-${index} {
+            #${seqId}-mask {
               fill: none;
               stroke: white;
               stroke-width: ${width};
               stroke-dasharray: ${data.length} ${data.length};
               stroke-dashoffset: ${data.length};
-              animation: ${id}-freehand-${index} ${data.duration}s linear forwards;
+              animation: ${seqId}-freehand ${data.duration}s linear forwards;
               animation-delay: ${data.delay}s;
             }
           `)
 
           // add css keyframe for animation
           styleSheet.insertRule(`
-            @keyframes ${id}-freehand-${index} {
+            @keyframes ${seqId}-freehand {
               from { stroke-dashoffset: ${data.length}; }
               to { stroke-dashoffset: 0; }
             }
@@ -95,12 +87,13 @@ export class Freehand {
         })
 
       // add defnition block to the beginning of the element
-      element.insertAdjacentElement('afterbegin', defs)
+      sequence.element().insertAdjacentElement('afterbegin', defs)
+
+      sequence.nextAction({
+        delay: awaitNext ? meta.totalDelay : 0
+      })
 
     }))
 
-    if (typeof nextAction === 'function') {
-      nextAction(element, parent, sequence)
-    }
   }
 }

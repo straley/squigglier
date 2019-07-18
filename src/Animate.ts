@@ -4,6 +4,7 @@ import { FreehandAnimateSettings } from './Animations/Freehand'
 export type AnimationSettings = {
   limit?: string,
   exclude?: string, 
+  delay?: string
 } & FreehandAnimateSettings 
 & AnimateFilterSettings
 
