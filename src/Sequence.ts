@@ -1,29 +1,29 @@
 import { Animations } from './Animations'
-import { CommandSettings } from './Loader'
-import { SVGStyle, SVGCSSRules } from './SVGStyle'
+import { Actions, SpriteEvents } from './SpriteLoader'
+import { SVGStyle } from './SVGStyle'
 
-export type SequenceAction = {
-  command: string,
+export type SequenceItem = {
+  action: string,
   settings: any
 }
 
-export type SequenceActions = Array<SequenceAction>
+export type SequenceItems = Array<SequenceItem>
 
-export type SequenceThen = () => void
+export type FinalSequenceCallback = () => void
 
 export class Sequence {
-  private actions: SequenceActions = []
+  private sequenceItems: SequenceItems = []
   private _index:number = 0
-  private _element: SVGSVGElement
+  private _element: SVGElement
   private actionSettings: any = {}
-  private finalAction?: SequenceThen
+  private finalSequenceItem?: FinalSequenceCallback
   private _style: SVGStyle
 
   constructor(
-    element: SVGSVGElement
+    element: SVGElement
   ) {
     this._element = element
-    this._style = new SVGStyle(this._element, this)
+    this._style = new SVGStyle(this._element)
   }
 
   public element() {
@@ -38,7 +38,7 @@ export class Sequence {
     return this._style
   }
 
-  public static attach(element: SVGSVGElement) {
+  public static attach(element: SVGElement) {
     return new Sequence(element)
   }
 
@@ -49,21 +49,21 @@ export class Sequence {
   public run() {
     this._index++
 
-    if (this.actions.length === 0) {
+    if (this.sequenceItems.length === 0) {
 
       this._style.render()
 
-      if (typeof this.finalAction === 'function') {
-        this.finalAction()
+      if (typeof this.finalSequenceItem === 'function') {
+        this.finalSequenceItem()
       }
     }
 
-    const action = this.actions.shift()
-    if (!action) {
+    const sequenceItem = this.sequenceItems.shift()
+    if (!sequenceItem) {
       return this
     }
 
-    const { command, settings } = action
+    const { action, settings } = sequenceItem
 
     Object.keys(this.actionSettings).forEach(index => {
       if (typeof settings[index] === 'undefined') {
@@ -77,27 +77,25 @@ export class Sequence {
       }
     })
 
-    Animations[command](settings, this)
+    Animations[action](settings, this)
 
     return this
   }
 
-  public finally(finalAction: SequenceThen) {
-    this.finalAction = finalAction
+  public finally(finalSequenceItem: FinalSequenceCallback) {
+    this.finalSequenceItem = finalSequenceItem
 
     return this
   }
 
-  public addActions(actions: Array<CommandSettings>) {
-    for (const action of actions) {
-      const {command, settings} = action
-      if (typeof Animations[command] === 'function') {
-        this.actions.push({ command, settings })
+  public addActions(actions: Actions) {
+    for (const animation of actions.animations) {
+      const {action, settings} = animation
+      if (typeof Animations[action] === 'function') {
+        this.sequenceItems.push({ action, settings })
       }
     }
 
     return this
   }
-
-
 }

@@ -1,6 +1,6 @@
-import {Loader} from './Loader';
+import {SpriteLoader} from './SpriteLoader';
 
 document.addEventListener(
   'DOMContentLoaded', 
-  ()=>new Loader(document.getElementsByTagName('svg')) 
+  ()=>new SpriteLoader() 
 )

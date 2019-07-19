@@ -1,5 +1,3 @@
-import { Sequence } from "./Sequence";
-
 export type SVGCSSRule = {
   [index:string]: any
 } 
@@ -14,11 +12,9 @@ export type RuleFamilyType = 'SELECTOR' | 'KEYFRAMES'
 
 export class RuleFamily {
   private rules: SVGCSSRuleSet = {}
-  private style: SVGStyle
   private type: RuleFamilyType
   
-  constructor(style: SVGStyle, type: RuleFamilyType) {
-    this.style = style
+  constructor(type: RuleFamilyType) {
     this.type = type
   }
 
@@ -95,19 +91,17 @@ export class UnidentifiedRuleAdder {
 }
 
 export class SVGStyle {
-  private element: SVGSVGElement
+  private element: SVGElement
   private styleSheet: HTMLStyleElement
   private rules: {
     keyframes: RuleFamily,
     selector: RuleFamily
   }
-  private sequence: Sequence
 
-  constructor(element: SVGSVGElement, sequence:Sequence) {
-    this.sequence = sequence
+  constructor(element: SVGElement) {
     this.rules = {
-      keyframes: new RuleFamily(this, 'KEYFRAMES'),
-      selector: new RuleFamily(this, 'SELECTOR'),
+      keyframes: new RuleFamily('KEYFRAMES'),
+      selector: new RuleFamily('SELECTOR'),
     }
 
     this.element = element

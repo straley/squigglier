@@ -5,6 +5,9 @@
   <meta charset="utf-8">
   <title>Squigglier Demo</title>
   <style type="text/css">
+    sprite {
+      display: none
+    }
     html, body {
       width: 100%;
       height: 100%;
@@ -38,49 +41,67 @@
       margin: 30px 0 0 40px;
     }
   </style>
-  <script src="/release/squigglier.js"></script>
 </head>
 
 <body>
+  <script src="/release/squigglier.js"></script>
   <div class="frame" id="before">
     <h1>Before</h1>
-    <svg 
+    <sprite 
       id="location1" 
       style="width:200px; height:200px; left: 40px;"
       src="/assets/location.svg" 
-    ></svg>
-    <svg 
+    ></sprite>
+    <sprite 
       id="camera1" 
       style="width:200px; height:200px; left: 280px; fill: red"
       src="/assets/camera.svg" 
-    ></svg>
-    <svg 
+    ></sprite>
+    <sprite 
       id="red-panda1"
       style="width:200px; height:200px; left: 520px;"
       src="/assets/red-panda.svg" 
-    ></svg>
+    ></sprite>
   </div>
 
   <div class="frame" id="after">
     <h1>After</h1>
-    <svg 
+    <sprite 
       id="location" 
       style="width:200px; height:200px; left: 40px;"
       src="/assets/location.svg" 
-      animation="fillin exclude=fill:default; freehand await width=30 limit=fill:default,stroke:default; fillin exclude=fill:default opacity=1 duration=1.5" 
-    ></svg>
-    <svg 
+      animation="
+        fillin exclude=fill:default; 
+        freehand await width=30 limit=fill:default,stroke:default; 
+        fillin exclude=fill:default opacity=1 duration=1.5
+      " 
+    > </sprite>
+    <sprite 
       id="camera" 
       style="width:200px; height:200px; left: 280px; fill: purple"
       src="/assets/camera.svg" 
-      animation="freehand" 
-    ></svg>
-    <svg 
+      animation="freehand"
+      onmouseover="console.log('afggfsgfgsfgsfsdfgdfgsdfg')"
+    >
+      <events>
+        <onclick>
+          console.log('hello')
+        </onclick>   
+        <onmouseover>
+          console.log('event', e)
+          console.log('this', this)
+        </onmouseover>         
+      </events>
+    </sprite>
+    <sprite 
       id="red-panda"
       style="width:200px; height:200px; left: 520px;"
       src="/assets/red-panda.svg" 
-      animation="fillin exclude=fill:default; freehand await width=12 minLength=50 limit=fill:default,stroke:default; fillin exclude=fill:default opacity=1 duration=1.5" 
-    ></svg>
+      animation="
+      fillin exclude=fill:default; 
+      freehand await width=12 minLength=50 limit=fill:default,stroke:default; 
+      fillin exclude=fill:default opacity=1 duration=1.5" 
+    ></sprite>
   </div>
 </body>
 

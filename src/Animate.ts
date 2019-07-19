@@ -31,7 +31,7 @@ export class Animate {
     }
   }
 
-  static inspectSvg = function(element:SVGSVGElement, results={geos:[]}) {
+  static inspectSvg = function(element:SVGElement, results={geos:[]}) {
     if (Animate.SVG_GEO_ELEMENTS.indexOf(element.tagName) !== -1) {
       results.geos.push(element)
       return results

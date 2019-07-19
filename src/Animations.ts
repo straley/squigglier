@@ -76,7 +76,7 @@ export class Animations {
   // given an SVGElement, all of the rules (limits, excludes, etc.), and settings
   // provide a set of geometries
   static applyValidGeometries(
-    element: SVGSVGElement, 
+    element: SVGElement, 
     settings: AnimationSettings={}
   ):{
     [index: string]: SVGGeometryElement
