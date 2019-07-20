@@ -1,9 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { JSDOM } from 'jsdom'
-import { SpriteAttributes, Sprite } from './Sprite/Sprite';
-import { SpriteAnimationAttributes, SpriteAnimation } from './Sprite/SpriteAnimation';
-import { SpriteAnimationsAttributes, SpriteAnimations } from './Sprite/SpriteAnimations';
+import { Sprite } from './Entity/Sprite/Sprite';
 
 export type CompilerConfig = {
   source?: string,
@@ -121,90 +119,6 @@ export class Compiler {
     }
   }
 
-  private mapElementAttributes (
-    element: Element, 
-    attributes: 
-    | SpriteAttributes 
-    | SpriteAnimationAttributes 
-    | SpriteAnimationsAttributes 
-  ) {
-    for (const name of element.getAttributeNames()) {
-      attributes[name] = element.getAttribute(name)
-    }
-
-    const children = this.mapElementChildren(element)
-    if (children && 'children' in attributes) {
-      attributes.children = children
-    }
-  }
-
-  private tagToClassReference (
-    tag: string
-  ):any {
-    const classReferences:any = {
-      'sprite': Sprite,
-      'animations': SpriteAnimation
-    }
-    
-    if (!(tag in classReferences)) {
-      return
-    }
-
-    const classReference =  classReferences[tag]
-    const childClass: typeof classReference = classReference
-    
-    return childClass
-  }
-
-  private mapElementChildren (
-    element: Element,
-  ) {
-
-    const ClassRef = this.tagToClassReference(element.tagName)
-
-    if (!ClassRef) {
-      return
-    }
-
-    const children: Array<any> = []
-
-    for (const child of element.children) {
-      children.push(new ClassRef(child))
-    }
-
-    return children
-  }
-  
-  private newEntity (
-    element: Element
-  ) {
-    const tagName = element.tagName.toLowerCase()
-
-    // todo: use the same `tagToClassReference` magic here
-    
-    if (tagName === 'sprite') {
-      const attributes: SpriteAttributes = { tagName, children: [] }
-      this.mapElementAttributes(element, attributes)
-      return new Sprite(attributes)
-    }
-
-    if (tagName === 'animations') {
-      console.log('here!')
-      const attributes: SpriteAnimationsAttributes = { tagName, children: [] }
-      this.mapElementAttributes(element, attributes)
-      return new SpriteAnimations(attributes)
-    }
-
-    if (tagName === 'animation') {
-      const attributes: SpriteAnimationAttributes = { tagName }
-      this.mapElementAttributes(element, attributes)
-      return new SpriteAnimation(attributes)
-    }
-
-  }
-
-
-
   private compile(file: CompilerFile) {
     try {
       const src = fs.readFileSync(file.fullPath, 'utf8')
@@ -216,24 +130,8 @@ export class Compiler {
 
       const entities:Array<any> = []
       dom.window.document.querySelectorAll('sprite').forEach(element => {
-
-        const entity = this.newEntity(element)      
-        entities.push(entity)  
-
-        /*
-
-        todo: continue mapping these relative classes
-        make sure that we can figure out children -- they're not working so well
-
-        */
-
-        // const children = []
-        // for (const child of element.children) {
-        //   const entity = this.newEntity(child)
-        //   if (entity) {
-        //     children.push(entity)
-        //   }
-        // }
+        const sprite = new Sprite(element)
+        entities.push(sprite)  
       })
 
       console.log(JSON.stringify(entities, null, 4))

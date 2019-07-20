@@ -1,0 +1,1 @@
+{"version":3,"file":"SpriteAnimationFreehand.js","sourceRoot":"","sources":["../../../../../src/Squigglier/Entity/Sprite/SpriteAnimation/SpriteAnimationFreehand.ts"],"names":[],"mappings":";;AAAA,yCAAqC;AAYrC,MAAa,QAAS,SAAQ,eAAM;IAIlC,YACE,mBAA0C;QAE1C,KAAK,CAAC,mBAAmB,EAAE;YACzB,KAAK,EAAE,EAAE;YACT,SAAS,EAAE,EAAE;SACd,CAAC,CAAA;IACJ,CAAC;;AAVM,gBAAO,GAAG,UAAU,CAAA;AAD7B,4BAaC"}

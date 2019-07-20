@@ -14,9 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const jsdom_1 = require("jsdom");
-const Sprite_1 = require("./Sprite/Sprite");
-const SpriteAnimation_1 = require("./Sprite/SpriteAnimation");
-const SpriteAnimations_1 = require("./Sprite/SpriteAnimations");
+const Sprite_1 = require("./Entity/Sprite/Sprite");
 class Compiler {
     constructor(configPath) {
         this.files = [];
@@ -104,58 +102,6 @@ class Compiler {
             }
         });
     }
-    mapElementAttributes(element, attributes) {
-        for (const name of element.getAttributeNames()) {
-            attributes[name] = element.getAttribute(name);
-        }
-        const children = this.mapElementChildren(element);
-        if (children && 'children' in attributes) {
-            attributes.children = children;
-        }
-    }
-    tagToClassReference(tag) {
-        const classReferences = {
-            'sprite': Sprite_1.Sprite,
-            'animations': SpriteAnimation_1.SpriteAnimation
-        };
-        if (!(tag in classReferences)) {
-            return;
-        }
-        const classReference = classReferences[tag];
-        const childClass = classReference;
-        return childClass;
-    }
-    mapElementChildren(element) {
-        const ClassRef = this.tagToClassReference(element.tagName);
-        if (!ClassRef) {
-            return;
-        }
-        const children = [];
-        for (const child of element.children) {
-            children.push(new ClassRef(child));
-        }
-        return children;
-    }
-    newEntity(element) {
-        const tagName = element.tagName.toLowerCase();
-        // todo: use the same `tagToClassReference` magic here
-        if (tagName === 'sprite') {
-            const attributes = { tagName, children: [] };
-            this.mapElementAttributes(element, attributes);
-            return new Sprite_1.Sprite(attributes);
-        }
-        if (tagName === 'animations') {
-            console.log('here!');
-            const attributes = { tagName, children: [] };
-            this.mapElementAttributes(element, attributes);
-            return new SpriteAnimations_1.SpriteAnimations(attributes);
-        }
-        if (tagName === 'animation') {
-            const attributes = { tagName };
-            this.mapElementAttributes(element, attributes);
-            return new SpriteAnimation_1.SpriteAnimation(attributes);
-        }
-    }
     compile(file) {
         try {
             const src = fs_1.default.readFileSync(file.fullPath, 'utf8');
@@ -164,21 +110,8 @@ class Compiler {
             });
             const entities = [];
             dom.window.document.querySelectorAll('sprite').forEach(element => {
-                const entity = this.newEntity(element);
-                entities.push(entity);
-                /*
-        
-                todo: continue mapping these relative classes
-                make sure that we can figure out children -- they're not working so well
-        
-                */
-                // const children = []
-                // for (const child of element.children) {
-                //   const entity = this.newEntity(child)
-                //   if (entity) {
-                //     children.push(entity)
-                //   }
-                // }
+                const sprite = new Sprite_1.Sprite(element);
+                entities.push(sprite);
             });
             console.log(JSON.stringify(entities, null, 4));
             file.status = 'complete';
