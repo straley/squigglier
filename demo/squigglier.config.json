@@ -1,0 +1,5 @@
+{
+  "source": "src",
+  "output": "public/assets",
+  "extensions": [".sprite", ".svg"]
+}

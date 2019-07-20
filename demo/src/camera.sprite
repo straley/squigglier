@@ -1,0 +1,11 @@
+<sprite name="camera" src="static/camera.svg">
+  <animations>
+    <freehand/>
+  </animations>
+  <on src="bases/on.hover.sprite"/>
+  <on>
+    <click>
+      console.log('click')
+    </click>
+  </on>
+</sprite>

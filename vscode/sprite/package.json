@@ -1,0 +1,25 @@
+{
+    "name": "sprite",
+    "displayName": "squigglier",
+    "description": "svg animator",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.36.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "squigglier",
+            "aliases": ["squigglier", "squigglier"],
+            "extensions": [".sprite"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "squigglier",
+            "scopeName": "source.sprite",
+            "path": "./syntaxes/squigglier.tmLanguage.json"
+        }]
+    }
+}

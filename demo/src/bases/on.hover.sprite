@@ -1,0 +1,8 @@
+<on>
+  <mouseenter>
+    this.setAttribute('stroke', '#000')
+  </mouseenter>
+  <mouseleave>
+    this.setAttribute('stroke', 'none')
+  </mouseleave>
+</on>
