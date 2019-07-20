@@ -1,21 +1,17 @@
 import { Entity } from '../../Entity'
-import { Sprite } from '../Sprite'
+import { Attributes as SpriteAnimationAttributes } from './SpriteAnimation'
 
-type _Attributes = Sprite.Animation & {
+export type Attributes = SpriteAnimationAttributes & {
   width: number
   minLength: number
 }
 
-export namespace Animation.Freehand {
-  export type Attributes = _Attributes
-}
-
 export class Freehand extends Entity {
   static tagName = 'freehand'
-  attributes: _Attributes
+  attributes: Attributes
   
   constructor(
-    attributesOrElement: _Attributes | Element
+    attributesOrElement: Attributes | Element
   ) {
     super(attributesOrElement, {
       width: 20,
