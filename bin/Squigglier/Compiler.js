@@ -14,7 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const jsdom_1 = require("jsdom");
-const Sprite_1 = require("./Entity/Sprite/Sprite");
+const Entity_Sprite_1 = require("./Entity/Sprite/Entity.Sprite");
 class Compiler {
     constructor(configPath) {
         this.files = [];
@@ -110,7 +110,7 @@ class Compiler {
             });
             const entities = [];
             dom.window.document.querySelectorAll('sprite').forEach(element => {
-                const sprite = new Sprite_1.Sprite(element);
+                const sprite = new Entity_Sprite_1.Sprite(element);
                 entities.push(sprite);
             });
             console.log(JSON.stringify(entities, null, 4));

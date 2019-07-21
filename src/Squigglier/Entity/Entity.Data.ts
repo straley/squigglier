@@ -1,4 +1,9 @@
-import { Entity } from './Entity'
+import { 
+  Entity, 
+  Attributes as BaseAttributes 
+} from './Entity'
+
+export type Attributes = BaseAttributes & {}
 
 export class EntityData extends Entity {
   data: string

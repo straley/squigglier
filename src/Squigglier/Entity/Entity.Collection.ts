@@ -1,10 +1,14 @@
-import { Entity } from './Entity'
+import { 
+  Attributes as _Attributes,
+  Entity as _Entity 
+} from './Entity'
 
-export type EntityChildren = Array<Entity | EntityCollection>
+export type Children = Array<_Entity | Collection>
+export type Attributes = _Attributes & {}
 
-export class EntityCollection extends Entity {
+export abstract class Collection extends _Entity {
   private allowedChildren?: Array<any>
-  children: EntityChildren
+  children: Children
 
   constructor (
     attributesOrElement: any,
@@ -51,4 +55,3 @@ export class EntityCollection extends Entity {
     }
   }
 }
-

@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Entity_1 = require("../../Entity");
-const SpriteAnimationCollection_1 = require("./SpriteAnimationCollection");
+const Entity_Sprite_Animation_Collection_1 = require("./Entity.Sprite.Animation.Collection");
 class Animation extends Entity_1.Entity {
     constructor(attributesOrElement) {
         super(attributesOrElement);
     }
 }
-Animation.Collection = SpriteAnimationCollection_1.Collection;
+Animation.Collection = Entity_Sprite_Animation_Collection_1.Collection;
 exports.Animation = Animation;
-//# sourceMappingURL=SpriteAnimation.js.map
+//# sourceMappingURL=Entity.Sprite.Animation.js.map

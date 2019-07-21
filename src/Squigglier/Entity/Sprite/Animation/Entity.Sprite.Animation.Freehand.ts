@@ -1,12 +1,12 @@
-import { Entity } from '../../Entity'
-import { Attributes as SpriteAnimationAttributes } from './SpriteAnimation'
+import { Entity as _Entity } from '../../Entity'
+import { Attributes as _Attributes  } from './Entity.Sprite.Animation'
 
-export type Attributes = SpriteAnimationAttributes & {
+export type Attributes = _Attributes & {
   width: number
   minLength: number
 }
 
-export class Freehand extends Entity {
+export class Freehand extends _Entity {
   static tagName = 'freehand'
   attributes: Attributes
   
