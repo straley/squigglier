@@ -17,12 +17,13 @@ export class Sprite extends Collection {
   public static Filter = _Filter
   public static On = _On
 
-  public static tagName = 'sprite'
+  static tagName = 'sprite'
 
   constructor (
     attributesOrElement: Sprite.Attributes | Element
   ) {
     super(attributesOrElement, [ Animations, Ons ])
+    this.renderTag = 'svg'
   }
 }
 

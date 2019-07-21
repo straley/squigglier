@@ -13,6 +13,7 @@ export class Ons extends Collection {
   constructor (
     attributesOrElement: Attributes | Element
   ) {
-    super(attributesOrElement, [ On.Click ])
+    super(attributesOrElement, [ On.Click, On.MouseEnter ])
+    this.shouldRender = false
   }
 }

@@ -1,21 +1,14 @@
 // for exporting
-
-console.log('Sprite.On.1')
-
 import { Click as _Click } from './Sprite.On.Click'
-
-console.log('Sprite.On.2')
+import { MouseEnter as _MouseEnter } from './Sprite.On.MouseEnter'
 
 export class On {
   public static Click = _Click
+  public static MouseEnter = _MouseEnter  
 }
-
-console.log('Sprite.On.3')
 
 // export nested types
 export namespace On {
   export type Click = _Click
+  export type MouseEnter = _MouseEnter
 }
-
-console.log('Sprite.On.4')
-

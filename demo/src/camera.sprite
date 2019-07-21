@@ -2,10 +2,13 @@
   <animations>
     <freehand/>
   </animations>
-  <on src="bases/on.hover.sprite"/>
-  <on>
-    <click>
-      console.log('click')
-    </click>
-  </on>
+    <on src="bases/on.hover.sprite"/>
+    <on>
+      <click>
+        console.log('click')
+      </click>
+      <mouseenter>
+        console.log('mouseenter')
+      </mouseenter>
+    </on>
 </sprite>

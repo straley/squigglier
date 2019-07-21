@@ -13,6 +13,7 @@ export class Animations extends Collection {
     attributesOrElement: Attributes | Element
   ) {
     super(attributesOrElement, [ Sprite.Animation ])
+    this.shouldRender = false
   }
 }
 

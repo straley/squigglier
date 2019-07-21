@@ -9,6 +9,7 @@ export abstract class Animation extends Entity {
     defaultAttributes?: any
   ) {
     super(attributesOrElement, defaultAttributes)
+    this.shouldRender = false
   }
 }
 

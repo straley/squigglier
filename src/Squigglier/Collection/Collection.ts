@@ -4,7 +4,8 @@ export type Children = Array<Entity | Collection>
 
 export abstract class Collection extends Entity {
   private allowedChildren?: Array<any>
-  children: Children
+  public children: Children
+  public shouldRenderChildren: boolean
   protected element?: Element
 
   constructor (
@@ -12,6 +13,7 @@ export abstract class Collection extends Entity {
     allowedChildren: Array<any>
   ) {
     super(attributesOrElement, allowedChildren)
+    this.shouldRenderChildren = true
     this.allowedChildren = allowedChildren
     this.mapElementChildren()
   }
@@ -50,6 +52,14 @@ export abstract class Collection extends Entity {
       }
       this.children.push(new reference(child))
     }
+  }
+
+  protected renderContents () {
+    if (!this.shouldRenderChildren) {
+      return ''
+    }
+
+    return this.children.map(child => `${child.render()}`).join('\n')
   }
 }
 

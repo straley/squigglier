@@ -5,13 +5,14 @@
   "repository": "https://www.github.com/straley/squigglier",
   "main": "index.js",
   "scripts": {
-    "demo": "cd demo; node server.js",
-    "clean": "rm -rf release lib lib-esm",
-    "build-old": "npm run clean && tsc --outDir build && tsc -m es6 --outDir lib-esm && webpack",
-    "build": "tsc --outDir bin",
-    "start": "concurrently \"npm run watch-lib\" \"npm run watch-demo\"",
-    "watch-lib": "watch \"npm run build\" src",
-    "watch-demo": "cd demo; nodemon server.js"
+    "start": "tsc; node build/index.js demo/",
+    "old-demo": "cd demo; node server.js",
+    "old-clean": "rm -rf release lib lib-esm",
+    "old-old-build": "npm run clean && tsc --outDir build && tsc -m es6 --outDir lib-esm && webpack",
+    "old-build": "tsc --outDir bin",
+    "old-start": "concurrently \"npm run watch-lib\" \"npm run watch-demo\"",
+    "old-watch-lib": "watch \"npm run build\" src",
+    "old-watch-demo": "cd demo; nodemon server.js"
   },
   "keywords": [
     "svg",
@@ -27,11 +28,13 @@
   "dependencies": {
     "@types/node": "^12.6.8",
     "awesome-typescript-loader": "^5.2.1",
+    "js-beautify": "^1.10.1-rc2",
     "jsdom": "^15.1.1",
     "typescript": "^3.5.3",
     "webpack": "^4.35.3"
   },
   "devDependencies": {
+    "@types/js-beautify": "^1.8.1",
     "@types/jsdom": "^12.2.4",
     "concurrently": "^4.1.1",
     "express": "^4.17.1",

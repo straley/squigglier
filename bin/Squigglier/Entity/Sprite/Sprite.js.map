@@ -1,1 +1,0 @@
-{"version":3,"file":"Sprite.js","sourceRoot":"","sources":["../../../../src/Squigglier/Entity/Sprite/Sprite.ts"],"names":[],"mappings":";;AAAA,0DAAsD;AACtD,2FAAgG;AAGhG,sEAA2E;AAC3E,uEAA2E;AAE3E,MAAa,MAAO,SAAQ,mCAAgB;IAI1C,YACE,mBAAgD;QAEhD,KAAK,CAAC,mBAAmB,EAAE,CAAE,sCAAmB,EAAE,+BAAY,CAAE,CAAC,CAAA;IACnE,CAAC;;AAPa,cAAO,GAAG,QAAQ,CAAA;AAClB,gBAAS,GAAG,2BAAU,CAAA;AAFtC,wBASC"}
