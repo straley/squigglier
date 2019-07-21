@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+// base class
 const Entity_1 = require("./Entity");
-class EntityData extends Entity_1.Entity {
-    constructor(attributesOrElement) {
-        super(attributesOrElement);
+class Data extends Entity_1.Entity {
+    constructor(attributesOrElement, defaultAttributes) {
+        super(attributesOrElement, defaultAttributes);
         this.mapElementData();
     }
     mapElementData() {
@@ -13,5 +14,5 @@ class EntityData extends Entity_1.Entity {
         this.data = this.element.textContent;
     }
 }
-exports.EntityData = EntityData;
+exports.Data = Data;
 //# sourceMappingURL=Entity.Data.js.map

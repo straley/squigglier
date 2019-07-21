@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Entity_1 = require("../../Entity");
+const Entity_1 = require("../../../Base/Entity");
 class Freehand extends Entity_1.Entity {
     constructor(attributesOrElement) {
         super(attributesOrElement, {

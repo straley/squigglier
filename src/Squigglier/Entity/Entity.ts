@@ -1,12 +1,7 @@
-export type Attributes = {
-  className?: string
-  name?: string
-  src?: string
-}
 
 export abstract class Entity {
   public className: string
-  public attributes: Attributes
+  public attributes: Entity.Attributes
   protected element?: Element
 
   constructor (
@@ -40,5 +35,13 @@ export abstract class Entity {
       }, 
       this.attributes || {}
     )
+  }
+}
+
+export namespace Entity {
+  export type Attributes = {
+    className?: string
+    name?: string
+    src?: string
   }
 }

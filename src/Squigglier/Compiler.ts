@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { JSDOM } from 'jsdom'
-import { Sprite } from './Entity/Sprite/Entity.Sprite';
+import { Sprite } from './Sprite/Sprite';
 
 export type CompilerConfig = {
   source?: string,

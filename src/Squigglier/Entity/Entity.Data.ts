@@ -1,17 +1,14 @@
-import { 
-  Entity, 
-  Attributes as BaseAttributes 
-} from './Entity'
+// base class
+import { Entity } from './Entity'
 
-export type Attributes = BaseAttributes & {}
-
-export class EntityData extends Entity {
+export abstract class Data extends Entity {
   data: string
 
   constructor(
     attributesOrElement: any,
+    defaultAttributes?: any
   ) {
-    super (attributesOrElement)
+    super (attributesOrElement, defaultAttributes)
     this.mapElementData()
   }
 
@@ -24,3 +21,7 @@ export class EntityData extends Entity {
   }
 }
 
+// export types
+export namespace Data {
+  export type Attributes = Entity.Attributes & {}
+}
