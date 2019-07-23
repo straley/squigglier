@@ -1,5 +1,6 @@
 // base class
 import { Collection } from '../Collection/Collection'
+import { Entity } from '../Entity/Entity'
 
 // allowed children
 import { Animations } from '../Collection/Collection.Animations'
@@ -10,7 +11,6 @@ import { Animation as _Animation } from './Animation/Sprite.Animation'
 import { Filter as _Filter } from './Filter/Sprite.Filter'
 import { On as _On } from './On/Sprite.On'
 
-
 export class Sprite extends Collection {
   // export nested classes
   public static Animation = _Animation
@@ -20,9 +20,11 @@ export class Sprite extends Collection {
   static tagName = 'sprite'
 
   constructor (
+    parent: Entity,
+    src: string,
     attributesOrElement: Sprite.Attributes | Element
   ) {
-    super(attributesOrElement, [ Animations, Ons ])
+    super(parent, src, attributesOrElement, [ Animations, Ons ])
     this.renderTag = 'svg'
   }
 }

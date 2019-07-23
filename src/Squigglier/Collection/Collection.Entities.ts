@@ -4,8 +4,10 @@ import { Entity } from '../Entity/Entity';
 export abstract class Entities extends Collection {
 
   constructor (
+    parent: Entity,
+    src: string,
     element: Element
   ) {
-    super(element, [ Entity ])
+    super(parent, src, element, [ Entity ])
   }
 }

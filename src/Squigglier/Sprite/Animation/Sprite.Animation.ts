@@ -5,10 +5,12 @@ export abstract class Animation extends Entity {
   
   
   constructor(
+    parent: Entity,
+    src: string,
     attributesOrElement: Entity.Attributes | Element,
     defaultAttributes?: any
   ) {
-    super(attributesOrElement, defaultAttributes)
+    super(parent, src, attributesOrElement, defaultAttributes)
     this.shouldRender = false
   }
 }

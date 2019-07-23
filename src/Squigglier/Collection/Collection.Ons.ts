@@ -1,5 +1,6 @@
 // base class
 import { Collection } from './Collection'
+import { Entity } from '../Entity/Entity'
 import { On } from '../Sprite/On/Sprite.On'
 
 export type Attributes = Collection.Attributes & {
@@ -11,9 +12,11 @@ export class Ons extends Collection {
   attributes: Attributes
   
   constructor (
+    parent: Entity,
+    src: string,
     attributesOrElement: Attributes | Element
   ) {
-    super(attributesOrElement, [ On.Click, On.MouseEnter ])
+    super(parent, src, attributesOrElement, [ On.Click, On.MouseEnter ])
     this.shouldRender = false
   }
 }

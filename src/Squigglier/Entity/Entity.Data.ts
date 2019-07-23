@@ -5,10 +5,12 @@ export abstract class Data extends Entity {
   data: string
 
   constructor(
+    parent: Entity,
+    src: string,
     attributesOrElement: any,
     defaultAttributes?: any
   ) {
-    super (attributesOrElement, defaultAttributes)
+    super(parent, src, attributesOrElement, defaultAttributes)
     this.mapElementData()
   }
 

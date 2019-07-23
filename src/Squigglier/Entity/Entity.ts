@@ -6,9 +6,15 @@ export abstract class Entity {
   public renderTag: string
   public shouldRender: boolean
   public attributes: Entity.Attributes
+  public parent?: Entity
   protected element?: Element
+  private _src: string
+
+  get src() { return this._src } 
 
   constructor (
+    parent: Entity,
+    src: string,
     attributesOrElement: any,
     defaultAttributes?: any
   ) {
@@ -19,6 +25,8 @@ export abstract class Entity {
       }
     }
 
+    this.parent = parent
+    this._src = src
     this.shouldRender = true
     this.className = this.constructor.name
     this.element = attributesOrElement
@@ -27,6 +35,23 @@ export abstract class Entity {
     }
     this.mapElementAttributes()
   } 
+
+  public getParent () {
+    return this.parent
+  }
+
+  public getParentOfClass (classReference: any|Array<any>):Entity {
+    const parent = this.getParent()
+    if (!parent) {
+      return
+    }
+
+    if (parent instanceof classReference) {
+      return parent
+    }
+
+    return parent.getParentOfClass(classReference)
+  }
 
   protected getTagName () {
     return (this.constructor as any)['tagName']

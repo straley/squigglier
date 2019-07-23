@@ -1,4 +1,5 @@
 import { Collection } from './Collection'
+import { Entity } from '../Entity/Entity'
 import { Sprite } from '../Sprite/Sprite'
 
 export type Attributes = Collection.Attributes & {
@@ -10,8 +11,10 @@ export class Sprites extends Collection {
   attributes: Attributes
   
   constructor (
+    parent: Entity,
+    src: string,
     attributesOrElement: Attributes | Element
   ) {
-    super(attributesOrElement, [ Sprite ])
+    super(parent, src, attributesOrElement, [ Sprite ])
   }
 }

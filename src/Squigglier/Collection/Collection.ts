@@ -9,10 +9,12 @@ export abstract class Collection extends Entity {
   protected element?: Element
 
   constructor (
+    parent: Entity,
+    src: string, 
     attributesOrElement: any,
     allowedChildren: Array<any>
   ) {
-    super(attributesOrElement, allowedChildren)
+    super(parent, src, attributesOrElement, allowedChildren)
     this.shouldRenderChildren = true
     this.allowedChildren = allowedChildren
     this.mapElementChildren()
@@ -50,7 +52,7 @@ export abstract class Collection extends Entity {
       if(!reference) {
         continue
       }
-      this.children.push(new reference(child))
+      this.children.push(new reference(this.src, child))
     }
   }
 
