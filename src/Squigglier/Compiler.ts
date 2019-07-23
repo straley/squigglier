@@ -173,7 +173,11 @@ export class Compiler {
 
                       const html = await file.render()
 
-                      console.log(html)
+                      if (this.config.output) {
+                        const outputFilePath = path.join(this.config.output, file.path.name) + '.sprite.svg'
+                        fs.writeFileSync(outputFilePath, html)
+                        console.log(`saved ${outputFilePath}`)
+                      }
                     }
                   }
                 }

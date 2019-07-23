@@ -17,13 +17,15 @@ export abstract class Base extends Data {
 
   renderContents () {
     const parentOfSvg = this.getParentOfClass(Sprite) 
-    console.log(parentOfSvg)
+    const name = parentOfSvg && parentOfSvg.attributes.name
 
     return `
       // <![CDATA[
-        document.querySelectorAll('[name="${this}"]').forEach(function(e){
-          e.addEventListener('${this.getTagName()}', function(e) {
-            ${this.data}
+        document.querySelectorAll('[name="${name}"]').forEach(function(__this){
+          __this.addEventListener('${this.getTagName()}', function(event) {
+            ${
+              this.data.replace(/(\b)this(\b)/g, '$1__this$2')
+            }
           })
         })
       // ]]>

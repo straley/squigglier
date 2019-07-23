@@ -5,10 +5,16 @@
     <on src="bases/on.hover.sprite"/>
     <on>
       <click>
-        console.log('click')
+        this.setAttribute("fill", "white");
+        setTimeout(function() {
+          this.setAttribute("fill", null);
+        }, 1000);
       </click>
       <mouseenter>
-        console.log('mouseenter')
+        const attributes = this.attributes;
+        for (const attribute of attributes) {
+          console.log(attribute.name, '=', attribute.value);
+        }
       </mouseenter>
     </on>
 </sprite>

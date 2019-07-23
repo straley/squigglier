@@ -1,5 +1,5 @@
 {
   "source": "src",
-  "output": "public/assets",
+  "output": "demo/public/assets",
   "extension": [".sprite", ".svg"]
 }

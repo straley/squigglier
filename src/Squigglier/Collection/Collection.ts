@@ -52,7 +52,7 @@ export abstract class Collection extends Entity {
       if(!reference) {
         continue
       }
-      this.children.push(new reference(this.src, child))
+      this.children.push(new reference(this, this.src, child))
     }
   }
 

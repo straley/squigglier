@@ -3,7 +3,10 @@
     // <![CDATA[
         document.querySelectorAll('[name="camera"]').forEach(function(__this) {
             __this.addEventListener('click', function(event) {
-              __this.setAttribute("stroke", "green")
+                __this.setAttribute("fill", "white");
+                setTimeout(function() {
+                    __this.setAttribute("fill", null);
+                }, 1000);
             })
         })
     // ]]>
@@ -12,7 +15,10 @@
     // <![CDATA[
         document.querySelectorAll('[name="camera"]').forEach(function(__this) {
             __this.addEventListener('mouseenter', function(event) {
-                console.log(__this.attributes.name)
+                const attributes = __this.attributes;
+                for (const attribute of attributes) {
+                    console.log(attribute.name, '=', attribute.value);
+                }
             })
         })
     // ]]>
