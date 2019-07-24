@@ -74,14 +74,20 @@ export abstract class Entity {
     )
   }
 
-  protected safeAttribute(key:string, value:string) {
+  protected safeAttribute(key?:string, value?:string) {
+    if (!key) {
+      return 
+    }
+
     key = key.replace(/[^A-Za-z_\-]/g, '')
-    value = value
-      .replace(/&/g, '&amp;') 
-      .replace(/'/g, '&apos;') 
-      .replace(/"/g, '&quot;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')   
+    value = typeof value === 'string' 
+      ? value
+        .replace(/&/g, '&amp;') 
+        .replace(/'/g, '&apos;') 
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')   
+      : value
       
     return `${key}="${value}"`
   }

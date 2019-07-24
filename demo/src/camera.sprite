@@ -7,13 +7,13 @@
       <click>
         this.setAttribute("fill", "white");
         setTimeout(function() {
-          this.setAttribute("fill", null);
+          this.setAttribute("fill", null)
         }, 1000);
       </click>
       <mouseenter>
         const attributes = this.attributes;
         for (const attribute of attributes) {
-          console.log(attribute.name, '=', attribute.value);
+          console.log(attribute.name, '=', attribute.value)
         }
       </mouseenter>
     </on>

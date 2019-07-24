@@ -1,15 +1,20 @@
-import { Entity } from '../Entity/Entity'
+import { Entity as _Entity } from '../Entity/Entity'
+import { Sprite } from '../Sprite/Sprite'
 
-export type Children = Array<Entity | Collection>
+export type Children = Array<_Entity | Collection>
 
-export abstract class Collection extends Entity {
+class _CollectionChildClasses extends _Entity {
+  public static Entity = _Entity
+}
+
+export abstract class Collection extends _CollectionChildClasses {
   private allowedChildren?: Array<any>
   public children: Children
   public shouldRenderChildren: boolean
   protected element?: Element
 
   constructor (
-    parent: Entity,
+    parent: _Entity,
     src: string, 
     attributesOrElement: any,
     allowedChildren: Array<any>
@@ -66,5 +71,13 @@ export abstract class Collection extends Entity {
 }
 
 export namespace Collection {
-  export type Attributes = Entity.Attributes & {}
+  export type Attributes = _Entity.Attributes & {}
+
+  export namespace Animations {
+    export type Attributes = Collection.Attributes & {
+      children?: Array<Sprite.Animation>
+    }
+  }
+  
+  export type Entity = _Entity
 }

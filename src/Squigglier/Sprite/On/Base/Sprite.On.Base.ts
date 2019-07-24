@@ -13,6 +13,9 @@ export abstract class Base extends Data {
   ) {
     super(parent, src, attributesOrElement, defaultAttributes)
     this.renderTag = 'script'
+
+    console.log('HAPPY BIRTHDAY', this.className)
+
   }
 
   renderContents () {

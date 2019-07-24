@@ -18,5 +18,7 @@ export class Ons extends Collection {
   ) {
     super(parent, src, attributesOrElement, [ On.Click, On.MouseEnter ])
     this.shouldRender = false
+
+    console.log('HAPPY BIRTHDAY', this.className)
   }
 }

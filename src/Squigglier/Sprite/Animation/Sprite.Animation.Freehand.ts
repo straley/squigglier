@@ -1,27 +1,46 @@
-import { Animation  } from './Sprite.Animation'
-import { Entity } from '../../Entity/Entity'
+import { Sprite } from '../Sprite'
+import { Base } from '../Animation/Base/Sprite.Animation.Base'
 
-export class Freehand extends Animation {
+export type Attributes =  Base & {
+  width: number
+  minLength: number
+}
+
+
+export class Freehand extends Base {
   static tagName = 'freehand'
-  attributes: Freehand.Attributes
+  attributes: Attributes
   
   constructor(
-    parent: Entity,
+    parent: Sprite.Entity,
     src: string,
-    attributesOrElement: Freehand.Attributes | Element
+    attributesOrElement: Attributes | Element
   ) {
     super(parent, src, attributesOrElement, {
       width: 20,
       minLength: 50
     })
+    this.renderTag = 'style'
+    this.shouldRender = true
+
+    console.log('Me??')
+
   }
+
+  renderContents () {
+    console.log('HERE')
+    // const parentOfSvg = this.getParentOfClass(Sprite) 
+    // const name = parentOfSvg && parentOfSvg.attributes.name
+
+    return `
+      @keyframes red-panda-1-0-opacity {
+        from {opacity: 0; }
+        to {opacity: 0; }
+      }
+    `
+  }
+
 }
 
-export namespace Freehand {
-  export type Attributes = Animation.Attributes & {
-    width: number
-    minLength: number
-  }
-}
 
 

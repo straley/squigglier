@@ -1,7 +1,7 @@
 {
     "name": "sprite",
-    "displayName": "squigglier",
-    "description": "svg animator",
+    "displayName": "sprite",
+    "description": "squigglier",
     "version": "0.0.1",
     "engines": {
         "vscode": "^1.36.0"
@@ -11,15 +11,20 @@
     ],
     "contributes": {
         "languages": [{
-            "id": "squigglier",
-            "aliases": ["squigglier", "squigglier"],
-            "extensions": [".sprite"],
+            "id": "sprite",
+            "extensions": [
+                ".sprite"
+            ],
             "configuration": "./language-configuration.json"
         }],
         "grammars": [{
-            "language": "squigglier",
+            "language": "sprite",
             "scopeName": "source.sprite",
-            "path": "./syntaxes/squigglier.tmLanguage.json"
+            "path": "./syntaxes/sprite.json",
+            "embeddedLanguages": {
+                "text.html.basic": "html",
+                "source.js": "javascript"
+            }
         }]
     }
 }

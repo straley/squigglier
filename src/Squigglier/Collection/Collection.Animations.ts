@@ -1,22 +1,20 @@
-import { Collection, } from './Collection'
+import { Collection } from './Collection'
 import { Entity } from '../Entity/Entity'
 import { Sprite } from '../Sprite/Sprite'
 
-export type Attributes = Collection.Attributes & {
-  children?: Array<Sprite.Animation>
-}
-
 export class Animations extends Collection {
   static tagName = 'animations'
-  attributes: Attributes
+  attributes: Collection.Attributes
   
   constructor (
     parent: Entity,
     src: string,
-    attributesOrElement: Attributes | Element
+    attributesOrElement: Collection.Attributes | Element
   ) {
-    super(parent, src, attributesOrElement, [ Sprite.Animation ])
+    super(parent, src, attributesOrElement, [ Sprite.Animation.Freehand ])
     this.shouldRender = false
+
+    console.log('HAPPY BIRTHDAY', this.className)
   }
 }
 

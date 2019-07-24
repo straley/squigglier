@@ -1,27 +1,14 @@
-import { Entity } from '../../Entity/Entity'
+// for exporting
+import { Freehand as _Freehand } from './Sprite.Animation.Freehand'
+import { Base as _Base } from './Base/Sprite.Animation.Base'
 
-export abstract class Animation extends Entity {
-  public attributes: Entity.Attributes
-  
-  
-  constructor(
-    parent: Entity,
-    src: string,
-    attributesOrElement: Entity.Attributes | Element,
-    defaultAttributes?: any
-  ) {
-    super(parent, src, attributesOrElement, defaultAttributes)
-    this.shouldRender = false
-  }
+export class Animation {
+  public static Freehand = _Freehand
+  public static Base = _Base
 }
 
+// export nested types
 export namespace Animation {
-  export type Attributes = Entity.Attributes & {
-    await?: boolean
-    limit?: Array<string>
-    exclude?: Array<string>
-    duration?: number
-  }   
-  
-  
+  export type Freehand = _Freehand
+  export type Base = _Base
 }
